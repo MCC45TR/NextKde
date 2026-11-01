@@ -2,7 +2,7 @@
 %global ui_commit e2592b2742c58c1bd797a8bcfa2a3ae7da4affd8
 Name:           nextkde-nkmail
 Version:        0.1.0
-Release:        0.3.git483a664%{?dist}
+Release:        0.4.git483a664%{?dist}
 Summary:        Native NkMail application from NextKDE
 License:        GPL-3.0-or-later AND BSD-2-Clause
 URL:            https://github.com/NextKde/NkMail
@@ -40,7 +40,7 @@ tar -xf %{SOURCE1} -C third_party/nextkdeAppDemo --strip-components=1
 grep -q '%{ui_commit}' third_party/kos-ui.lock.json
 
 %build
-%cmake -GNinja -DCMAKE_SKIP_RPATH=ON -DNKMAIL_BUILD_TESTS=ON
+%cmake -GNinja -DCMAKE_SKIP_RPATH=ON -DNKMAIL_BUILD_TESTS=ON -DBUILD_SHARED_LIBS=OFF
 %cmake_build
 
 %install
@@ -68,6 +68,9 @@ test -z "$(find %{buildroot} -type f \( -name '*.py' -o -name '*.pyc' \) -print 
 %{_datadir}/icons/hicolor/scalable/apps/nkmail.svg
 
 %changelog
+* Sun Nov 01 2026 mcc45tr - 0.1.0-0.4.git483a664
+- Preserve upstream static mailio against Fedora shared-library defaults
+
 * Sun Nov 01 2026 mcc45tr - 0.1.0-0.3.git483a664
 - Use the SQLite driver provided by Fedora qt6-qtbase
 

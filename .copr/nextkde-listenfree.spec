@@ -5,7 +5,7 @@
 
 Name:           nextkde-listenfree
 Version:        0.3.8
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        ListenFree music player from NextKDE
 License:        GPL-3.0-or-later AND AGPL-3.0-or-later AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT AND MIT-0 AND BSD-3-Clause AND Apache-2.0 AND BSL-1.0
 URL:            https://github.com/NextKde/NextKde
@@ -103,6 +103,7 @@ cmake --install sdk/build/qmmp
 cmake -S apps/listenfree -B listenfree-build -GNinja \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=%{_prefix} \
     -DKOS_LISTENFREE_SDK="$sdk" -DLISTENFREE_LIVE_FFMPEG_ROOT=%{_prefix} \
+    -DLISTENFREE_LIVE_FFMPEG_INCLUDE="$(pkg-config --variable=includedir libavformat)" \
     -DLISTENFREE_BUILD_TESTS=ON
 cmake --build listenfree-build --parallel %{_smp_build_ncpus} --target \
     listenfree listenfree-sourcehost listenfree_language_tests \
@@ -140,6 +141,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/listenfree.svg
 
 %changelog
+* Sun Nov 01 2026 mcc45tr - 0.3.8-4
+- Use the FFmpeg include directory declared by Fedora pkg-config metadata
+
 * Sun Nov 01 2026 mcc45tr - 0.3.8-3
 - Require the Qt ShaderTools CMake development module
 
