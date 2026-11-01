@@ -1,0 +1,32 @@
+name: Fedora upstream sync
+
+on:
+  schedule:
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fedora-upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    if: github.repository == 'MCC45TR/NextKde'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Check merge and conflict behavior
+        run: |
+          bash .copr/tests/sync-upstream.sh
+          bash .copr/tests/build-srpms.sh
+      - name: Merge upstream without overwriting downstream commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          bash .copr/sync-upstream.sh
