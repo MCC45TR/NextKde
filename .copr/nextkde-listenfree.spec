@@ -5,7 +5,7 @@
 
 Name:           nextkde-listenfree
 Version:        0.3.8
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        ListenFree music player from NextKDE
 License:        GPL-3.0-or-later AND AGPL-3.0-or-later AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT AND MIT-0 AND BSD-3-Clause AND Apache-2.0 AND BSL-1.0
 URL:            https://github.com/NextKde/NextKde
@@ -35,6 +35,12 @@ BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  pkgconfig(libswresample)
 BuildRequires:  pkgconfig(libcurl)
 BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(sndfile)
+BuildRequires:  pkgconfig(libmpg123)
+BuildRequires:  pkgconfig(flac)
+BuildRequires:  pkgconfig(vorbisfile)
+BuildRequires:  pkgconfig(opusfile)
+BuildRequires:  pkgconfig(wavpack)
 BuildRequires:  pkgconfig(libsecret-1)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(zlib)
@@ -88,7 +94,7 @@ export PKG_CONFIG_PATH="$sdk/prefix/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG
 qmmp_options=""
 for option in $(rg --no-filename -o 'option\(USE_[A-Z0-9_]+' sdk/vendor/qmmp-2.4.1 -g CMakeLists.txt | sed 's/^option(//' | sort -u); do
     case "$option" in
-        USE_FFMPEG|USE_CURL|USE_PULSE|USE_NULL|USE_CROSSFADE) value=ON ;;
+        USE_FFMPEG|USE_CURL|USE_PULSE|USE_NULL|USE_CROSSFADE|USE_SNDFILE|USE_MPG123|USE_FLAC|USE_VORBIS|USE_OPUS|USE_WAVPACK|USE_CUE) value=ON ;;
         *) value=OFF ;;
     esac
     qmmp_options="$qmmp_options -D$option=$value"
@@ -127,6 +133,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/listenfree.desktop
 test -x %{buildroot}%{private_dir}/listenfree
 test -x %{buildroot}%{private_dir}/listenfree-sourcehost
 test -f %{buildroot}%{private_dir}/qmmp/Input/libffmpeg.so
+test -f %{buildroot}%{private_dir}/qmmp/Input/libsndfile.so
+test -f %{buildroot}%{private_dir}/qmmp/Input/libmpeg.so
+test -f %{buildroot}%{private_dir}/qmmp/Input/libflac.so
+test -f %{buildroot}%{private_dir}/qmmp/Input/libvorbis.so
+test -f %{buildroot}%{private_dir}/qmmp/Input/libopus.so
 test -f %{buildroot}%{private_dir}/qmmp/Transports/libhttp.so
 test -f %{buildroot}%{private_dir}/qmmp/Output/libpulseaudio.so
 test -z "$(find %{buildroot} -xtype l -print -quit)"
@@ -142,6 +153,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/listenfree.svg
 
 %changelog
+* Sun Nov 01 2026 mcc45tr - 0.3.8-6
+- Include Qmmp decoders for WAV, MP3, FLAC, Vorbis, Opus, WavPack and CUE
+
 * Sun Nov 01 2026 mcc45tr - 0.3.8-5
 - Build private copied plugins with install RPATHs instead of SDK build paths
 
