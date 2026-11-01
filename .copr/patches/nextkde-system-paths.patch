@@ -1,0 +1,94 @@
+--- a/apps/settings/CMakeLists.txt
++++ b/apps/settings/CMakeLists.txt
+@@ -46,15 +46,15 @@
+ # launch (app grid, KRunner, menu) fell through to the installed
+ # ~/.config/quickshell/kos session and reported "外观设置请求失败".
+ target_compile_definitions(kos-settings PRIVATE
+-    SETTINGS_QML_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+-    SETTINGS_SHELL_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../../shell"
++    SETTINGS_QML_DIR="/usr/share/nextkde/apps/settings"
++    SETTINGS_SHELL_DIR="/usr/share/nextkde/shell"
+ )
+ 
+ install(TARGETS kos-settings RUNTIME DESTINATION bin)
+ file(GLOB SETTINGS_RUNTIME_QML CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.qml")
+-install(FILES ${SETTINGS_RUNTIME_QML} DESTINATION share/kos/settings)
+-install(DIRECTORY icons DESTINATION share/kos/settings)
+-install(DIRECTORY pages components DESTINATION share/kos/settings
++install(FILES ${SETTINGS_RUNTIME_QML} DESTINATION share/nextkde/apps/settings)
++install(DIRECTORY icons DESTINATION share/nextkde/apps/settings)
++install(DIRECTORY pages components DESTINATION share/nextkde/apps/settings
+     FILES_MATCHING PATTERN "*.qml")
+ 
+ if(BUILD_TESTING)
+@@ -68,7 +68,7 @@
+     target_include_directories(kos-settings-backend-test PRIVATE src)
+     target_link_libraries(kos-settings-backend-test PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
+     target_compile_definitions(kos-settings-backend-test PRIVATE
+-        SETTINGS_SHELL_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../../shell")
++        SETTINGS_SHELL_DIR="/usr/share/nextkde/shell")
+     add_test(NAME kos-settings.backend-modules COMMAND kos-settings-backend-test)
+     set_tests_properties(kos-settings.backend-modules PROPERTIES LABELS logic TIMEOUT 20)
+ 
+--- a/apps/settings/src/SettingsRuntime.cpp
++++ b/apps/settings/src/SettingsRuntime.cpp
+@@ -31,7 +31,7 @@
+     // Cleaned so the logged path is the one a reader can paste into a shell:
+     // `~/.local/bin/../share/...` is what the join produces, not what exists.
+     const QString installedCopy = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath())
+-            .filePath(QStringLiteral("../share/kos/settings/main.qml")));
++            .filePath(QStringLiteral("../share/nextkde/apps/settings/main.qml")));
+     if (QFileInfo::exists(installedCopy)) {
+         entry.qmlPath = installedCopy;
+         entry.source = QStringLiteral("installed copy");
+--- a/apps/settings/src/ShellIpcClient.cpp
++++ b/apps/settings/src/ShellIpcClient.cpp
+@@ -24,8 +24,7 @@
+ 
+ QString ShellIpcClient::installedShellDirectory()
+ {
+-    return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+-        + QStringLiteral("/quickshell/kos");
++    return QStringLiteral("/usr/share/nextkde/shell");
+ }
+ 
+ bool ShellIpcClient::isInstalledShellDirectory(const QString& shellPath)
+@@ -72,8 +71,6 @@
+ 
+ QStringList ShellIpcClient::connectArgsFor(const QString& shellPath)
+ {
+-    if (shellPath == installedShellDirectory())
+-        return { QStringLiteral("-c"), QStringLiteral("kos") };
+     return { QStringLiteral("--path"), shellPath };
+ }
+ 
+--- a/apps/settings/tests/backend/ModulesTest.cpp
++++ b/apps/settings/tests/backend/ModulesTest.cpp
+@@ -127,7 +127,7 @@
+         QCOMPARE(calls, 1);
+     }
+ 
+-    void installedSessionUsesConfigurationName()
++    void installedSessionUsesSystemPath()
+     {
+         QTemporaryDir directory;
+         const QString log = directory.filePath("arguments");
+@@ -137,7 +137,7 @@
+         client.request(
+             "appearance-settings", { "snapshot" }, "failed", [&](const auto&) { ++calls; });
+         QTRY_COMPARE(calls, 1);
+-        QCOMPARE(lines(log).mid(0, 2), QStringList({ "-c", "kos" }));
++        QCOMPARE(lines(log).mid(0, 2), QStringList({ "--path", "/usr/share/nextkde/shell" }));
+     }
+ 
+     void preferredSessionRetriesBeforeFallback_data()
+--- a/kwin/kos-bridge/metadata.json
++++ b/kwin/kos-bridge/metadata.json
+@@ -4,6 +4,6 @@
+         "Description": "Draw window buttons on top of CSD windows",
+         "Category": "Appearance",
+         "License": "MIT",
+-        "EnabledByDefault": true
++        "EnabledByDefault": false
+     }
+ }
