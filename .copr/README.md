@@ -6,8 +6,8 @@ The target is [mcc45tr/kdenext](https://copr.fedorainfracloud.org/coprs/mcc45tr/
 **Fedora Rawhide AArch64 only**. Fedora's original Plasma and KDE applications
 are used without creating Uke variants.
 
-2026-11-01: the original desktop and Quickshell packages were published.
-Application, theme and native spatial-engine builds are in progress. Source,
+2026-11-01: all 18 runtime and meta packages built on native Rawhide AArch64.
+Upstream Settings, Go, KMusic, NkMail and ListenFree build-VM checks passed. Source,
 COPR build, package checks and physical-device acceptance are separate results.
 No installation or graphical-session qualification is claimed here.
 
@@ -23,7 +23,8 @@ No installation or graphical-session qualification is claimed here.
 | NkMail Kos.Ui | Recorded gitlink `e2592b2742c58c1bd797a8bcfa2a3ae7da4affd8` | Canonical UI sources compiled into NkMail; no moving submodule branch |
 
 `nextkde-full` selects the complete packaged main release. `nextkde-suite` also
-selects the independent KMusic and NkMail applications. Components can be
+selects the independent KMusic and NkMail applications and the original Fedora
+Plasma desktop, Dolphin, Konsole, System Settings and desktop portal. Components can be
 installed independently. The legacy KOS Music player and ListenFree coexist;
 the RPM does not migrate user data or change media associations. Upstream's
 per-user installers are not run by the package.
@@ -37,6 +38,17 @@ The KWin plugins require KWin 6.8.2; Qt private API requirements also constrain
 Quickshell. Rebuild and validate the packages when those ABI versions change.
 The optional Quickshell crash handler remains disabled because Fedora cpptrace
 lacks the required signal-safe unwinding support.
+
+## Install the complete desktop
+
+```sh
+sudo dnf copr enable mcc45tr/kdenext
+sudo dnf install nextkde-suite
+```
+
+These commands were not executed on the host. The metapackage supplies all
+runtime components; activation of the shell, login and lock themes remains an
+explicit user choice. Rawhide KWin and Qt ABI updates can require rebuilding.
 
 ## Build and publish
 
