@@ -54,6 +54,12 @@ are generated from the pinned module files and verified during SRPM
 preparation. Binary builds run without network access. Generated archives,
 build output and private receipts are ignored by Git.
 
+Pass one source package name to build only its SRPM, for example
+`bash .copr/build-srpms.sh nextkde-suite`. Source preparation explicitly targets
+AArch64 and can run on a different build-host architecture; the binary COPR
+build remains native AArch64. COPR package source jobs fetch this fork and use
+the same helper instead of depending on a temporary uploaded SRPM URL.
+
 NkMail's unmodified upstream Python CLI and loopback-protocol test fixtures
 run only inside the COPR build VM, pinned by its full source commit. Reusing
 those fixtures preserves their TLS/error-path coverage. Python source or a

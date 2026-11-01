@@ -6,6 +6,11 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 cp "$packaging/build-srpms.sh" "$tmp/build-srpms.sh"
 mkdir "$tmp/referances"
+if bash "$tmp/build-srpms.sh" '../outside' > "$tmp/selection.log" 2>&1; then
+    echo 'An invalid package selection was accepted.' >&2
+    exit 1
+fi
+grep -q 'Unknown package:' "$tmp/selection.log"
 printf 'corrupt source\n' > "$tmp/referances/fixture.tar.gz"
 checksum=$(printf 'expected source\n' | sha256sum | cut -d ' ' -f 1)
 printf '%s\tfixture.tar.gz\thttps://invalid.example/unused\n' "$checksum" > "$tmp/sources.tsv"
