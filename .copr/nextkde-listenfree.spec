@@ -5,7 +5,7 @@
 
 Name:           nextkde-listenfree
 Version:        0.3.8
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        ListenFree music player from NextKDE
 License:        GPL-3.0-or-later AND AGPL-3.0-or-later AND GPL-2.0-or-later AND LGPL-2.1-or-later AND MIT AND MIT-0 AND BSD-3-Clause AND Apache-2.0 AND BSL-1.0
 URL:            https://github.com/NextKde/NextKde
@@ -26,7 +26,7 @@ BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtdeclarative-devel
 BuildRequires:  qt6-qttools-devel
 BuildRequires:  qt6-qtmultimedia-devel
-BuildRequires:  qt6-qtshadertools
+BuildRequires:  cmake(Qt6ShaderTools)
 BuildRequires:  qt6-qtwebengine-devel
 BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  pkgconfig(libavcodec)
@@ -140,6 +140,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/listenfree.svg
 
 %changelog
+* Sun Nov 01 2026 mcc45tr - 0.3.8-3
+- Require the Qt ShaderTools CMake development module
+
 * Sun Nov 01 2026 mcc45tr - 0.3.8-2
 - Add TagLib header dependencies and retain normal browser sandbox settings
 
